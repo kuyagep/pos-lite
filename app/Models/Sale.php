@@ -10,12 +10,7 @@ class Sale extends Model
 {
     use HasFactory, HasUlids;
 
-    protected $fillable = [
-        'user_id',
-        'total_amount',
-        'discount',
-        'payment_method'
-    ];
+    protected $guarded = [];
 
     public function cashier()
     {

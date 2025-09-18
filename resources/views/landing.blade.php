@@ -2,135 +2,181 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher’s Day Registration & Attendance</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,  shrink-to-fit=no">
+    <title>POSLite - Smart & Simple POS for Small Businesses</title>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Meta Description -->
+    <meta name="description" content="POSLite helps sari-sari stores, coffee shops, and small restos manage sales, inventory, and reports with ease.">
 
-    <style>
-        .btn-deped {
-            background-color: #003399;
-            border-color: #003399;
-            color: #fff;
-        }
+    <!-- Keywords -->
+    <meta name="keywords" content="POS System, Inventory, Sari-sari store POS, Coffee shop POS, Restaurant POS, Sales tracking">
 
-        .btn-deped:hover {
-            background-color: #002b73;
-            border-color: #002b73;
-            color: #fff;
+    <!-- Author -->
+    <meta name="author" content="POSLite">
 
-        }
+    <!-- Open Graph (for Facebook, LinkedIn, etc.) -->
+    <meta property="og:title" content="POSLite - Smart POS for Small Businesses">
+    <meta property="og:description" content="Easily manage sales, inventory, and reports with POSLite. Designed for sari-sari stores, coffee shops, and small restaurants.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:image" content="{{ asset('images/og-preview.png') }}"> <!-- Create this preview image -->
 
-        .hero {
-            background: url('{{ asset('images/teacher.png') }}') center/cover no-repeat;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-            position: relative;
-        }
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="POSLite - Smart POS for Small Businesses">
+    <meta name="twitter:description" content="POS + Inventory system for sari-sari stores, coffee shops, and restaurants.">
+    <meta name="twitter:image" content="{{ asset('images/og-preview.png') }}">
 
-        .hero::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-        }
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
 
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
+    <!-- Fonts -->
+    <link href="{{ asset('static/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('static/css/sb-admin-2.min.css') }}" rel="stylesheet">
 
-        .feature-icon {
-            font-size: 3rem;
-            color: #003399;
-        }
-    </style>
+    <!-- Custom overrides -->
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
 </head>
 
-<body>
+<body id="page-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Smart POSLite</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    <li class="nav-item"><a class="btn btn-light text-primary ml-3" href="{{ route('login') }}">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="rounded-circle mb-3"
-                style="width:100px; height:100px; object-fit:cover;">
-            <h1 class="display-4 font-weight-bold">Teacher’s Day 2025</h1>
-            <p class="lead">Online Registration & QR Code Attendance System</p>
-            <a href="/join" class="btn btn-deped btn-lg m-2">Join the Event</a>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="py-5">
+    <header class="bg-primary text-white text-center py-5">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <img src="{{ asset('images/teachers.png') }}" alt="Teachers" class="img-fluid rounded shadow">
-                </div>
-                <div class="col-md-6">
-                    <h2>About the System</h2>
-                    <p>
-                        The Teacher’s Day Online Registration & Attendance System provides a seamless way to register
-                        participants and track attendance using QR codes. Designed to celebrate our educators, this
-                        system
-                        makes event management faster, more efficient, and paperless.
-                    </p>
-                </div>
-            </div>
+            <h1 class="fw-bold">Welcome to POSLite</h1>
+            <p class="lead">Smart, Simple, and Efficient Point of Sale for your business</p>
+            <a href="#features" class="btn btn-light text-primary btn-lg mt-3">Get Started</a>
         </div>
-    </section>
+    </header>
 
     <!-- Features Section -->
-    <section class="bg-light py-5">
-        <div class="container text-center">
-            <h2 class="mb-4">Key Features</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="feature-icon mb-3">
-                        <i class="fas fa-user-plus"></i>
+    <section id="features" class="py-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-cash-register fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Easy Sales</h5>
+                            <p class="card-text">Record and manage sales seamlessly with our intuitive POS interface.</p>
+                        </div>
                     </div>
-                    <h5>Online Registration</h5>
-                    <p>Teachers can easily sign up and secure their slot online.</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-icon mb-3">
-                        <i class="fas fa-qrcode"></i>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-boxes fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Inventory Tracking</h5>
+                            <p class="card-text">Stay on top of your stock with real-time inventory alerts and reports.</p>
+                        </div>
                     </div>
-                    <h5>QR Code Attendance</h5>
-                    <p>Fast and reliable attendance tracking using QR codes.</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-icon mb-3">
-                        <i class="fas fa-chart-line"></i>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Analytics</h5>
+                            <p class="card-text">View daily reports and best-selling products to make smarter decisions.</p>
+                        </div>
                     </div>
-                    <h5>Reports & Analytics</h5>
-                    <p>Generate summaries and monitor attendance in real-time.</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="bg-light py-5">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-4">Pricing Plans</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">Starter</div>
+                        <div class="card-body">
+                            <h3 class="card-title">$9/mo</h3>
+                            <ul class="list-unstyled">
+                                <li>Basic Features</li>
+                                <li>1 Cashier</li>
+                                <li>Email Support</li>
+                            </ul>
+                            <a href="#" class="btn btn-primary">Choose</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">Pro</div>
+                        <div class="card-body">
+                            <h3 class="card-title">$29/mo</h3>
+                            <ul class="list-unstyled">
+                                <li>All Starter Features</li>
+                                <li>5 Cashiers</li>
+                                <li>Reports & Analytics</li>
+                            </ul>
+                            <a href="#" class="btn btn-primary">Choose</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">Enterprise</div>
+                        <div class="card-body">
+                            <h3 class="card-title">$99/mo</h3>
+                            <ul class="list-unstyled">
+                                <li>Unlimited Features</li>
+                                <li>Unlimited Cashiers</li>
+                                <li>24/7 Support</li>
+                            </ul>
+                            <a href="#" class="btn btn-primary">Choose</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-5">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-4">Contact Us</h2>
+            <p class="mb-3">Have questions? Reach out and we’ll be happy to help.</p>
+            <a href="mailto:support@mpos.com" class="btn btn-primary">Email Support</a>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-4 bg-dark text-white text-center">
-        <div class="container">
-            <p class="mb-0">&copy; 2025 Teacher’s Day Registration & Attendance System | Powered by Division of Davao
-                del Sur</p>
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <small>© {{ date('Y') }} My POS System. All Rights Reserved.</small>
         </div>
     </footer>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script src="{{ asset('static/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('static/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('static/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('static/js/sb-admin-2.min.js') }}"></script>
 </body>
 
 </html>

@@ -1,0 +1,22 @@
+/* Override SB Admin 2 Primary Theme Color */
+.bg-primary {
+    background-color: #003399 !important;
+}
+
+.btn-primary {
+    background-color: #003399 !important;
+    border-color: #003399 !important;
+}
+
+.btn-primary:hover {
+    background-color: #002266 !important;
+    border-color: #001a4d !important;
+}
+
+.text-primary {
+    color: #003399 !important;
+}
+
+.border-left-primary {
+    border-left: .25rem solid #003399 !important;
+}

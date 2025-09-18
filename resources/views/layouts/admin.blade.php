@@ -10,23 +10,8 @@
     <link href="{{ asset('static/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('static/css/sb-admin-2.min.css') }}" rel="stylesheet">
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
-    <style>
-        .btn-deped {
-            background-color: #003399;
-            border-color: #003399;
-            color: #fff;
-        }
-
-        .btn-deped:hover {
-            background-color: #002b73;
-            border-color: #002b73;
-            color: #fff;
-        }
-        .bg-theme{
-            background-color: #003399;
-            color: #fff;
-        }
-    </style>
+        <!-- Custom overrides -->
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
 
     @stack('styles')
 </head>

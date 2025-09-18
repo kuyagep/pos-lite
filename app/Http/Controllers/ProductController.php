@@ -4,63 +4,66 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        return Inertia::render('products/index', [
-            'products' => Product::latest()->get(),
-        ]);
+        $products = Product::latest()->paginate(10);
+        return view('admin.products.index', compact('products'));
     }
 
     public function create()
     {
-        return Inertia::render('Products/Create');
+        return view('admin.products.create');
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'            => 'required|string|max:255',
-            'category'        => 'nullable|string|max:255',
-            'price'           => 'required|numeric|min:0',
-            'stock'           => 'required|integer|min:0',
-            'low_stock_alert' => 'nullable|integer|min:0',
+            'name' => 'required|string|max:255',
+            'category' => 'nullable|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'low_stock_alert' => 'nullable|integer|min:1',
         ]);
+        $qrCodeValue = uniqid();
+        $product = Product::create($data);
 
-        Product::create($data);
+        // Generate QR code
+        // $qrPath = "qr_codes/{$product->id}.png";
+        // Storage::disk('public')->put($qrPath, QrCode::format('png')->size(200)->generate($product->id));
+        $product->update(['qr_code' => $qrCodeValue]);
 
-        return redirect()->route('products.index')->with('success', 'Product created successfully.');
+        return redirect()->route('products.index')->with('success', 'Product created successfully!');
     }
 
     public function edit(Product $product)
     {
-        return Inertia::render('Products/Edit', [
-            'product' => $product,
-        ]);
+        return view('admin.products.edit', compact('product'));
     }
-
 
     public function update(Request $request, Product $product)
     {
         $data = $request->validate([
-            'name' => 'string',
-            'category' => 'nullable|string',
-            'price' => 'numeric',
-            'stock' => 'integer',
-            'low_stock_alert' => 'integer|min:1',
+            'name' => 'required|string|max:255',
+            'category' => 'nullable|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'low_stock_alert' => 'nullable|integer|min:1',
         ]);
 
         $product->update($data);
 
-        return redirect()->route('products.index')->with('success', 'Product updated!');
+        return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-        return redirect()->route('products.index')->with('success', 'Product deleted!');
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully!');
     }
 }

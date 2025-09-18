@@ -1,7 +1,7 @@
 <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar" style="background-color: #003399;">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('admin.dashboard') }}">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
         <div class="sidebar-brand-icon">
             <i class="fas fa-school"></i>
         </div>
@@ -13,7 +13,7 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-        <a class="nav-link " href="{{ route('admin.dashboard') }}">
+        <a class="nav-link " href="#">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>
@@ -21,44 +21,16 @@
 
 
     <!-- Nav Item - Registrations -->
-    <li class="nav-item {{ request()->routeIs('admin.participants.*') ? 'active' : '' }}">
-        <a class="nav-link " href="{{ route('admin.participants.index') }}">
+    <li class="nav-item {{ request()->routeIs('products.*') ? 'active' : '' }}">
+        <a class="nav-link " href="{{ route('products.index') }}">
             <i class="fas fa-users"></i>
-            <span>Participants</span>
+            <span>Products</span>
         </a>
     </li>
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
-    <!-- Raffle Section -->
-    <div class="sidebar-heading">
-        Raffle
-    </div>
-
-    <li class="nav-item {{ request()->routeIs('admin.prizes.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('admin.prizes.index') }}">
-            <i class="fas fa-gift"></i>
-            <span>Prizes</span>
-        </a>
-    </li>
-
-    <li class="nav-item {{ request()->routeIs('admin.winners.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('admin.winners.index') }}">
-            <i class="fas fa-trophy"></i>
-            <span>Winners</span>
-        </a>
-    </li>
-
-    <li class="nav-item {{ request()->routeIs('raffle.draw') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('raffle.draw') }}" target="_blank">
-            <i class="fas fa-random"></i>
-            <span>Raffle Draw</span>
-        </a>
-    </li>
-    <li class="nav-item {{ request()->routeIs('attendance.scan') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('attendance.scan') }}" target="_blank">
-            <i class="fas fa-random"></i>
-            <span>Scan QRCODE</span>
+    <li class="nav-item {{ request()->routeIs('sales.*') ? 'active' : '' }}">
+        <a class="nav-link " href="{{ route('sales.index') }}">
+            <i class="fas fa-users"></i>
+            <span>Sales</span>
         </a>
     </li>
 

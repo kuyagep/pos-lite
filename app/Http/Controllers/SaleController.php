@@ -6,55 +6,67 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class SaleController extends Controller
 {
-    public function checkout()
+    public function index()
     {
-        return Inertia::render('Sales/Checkout', [
-            'products' => Product::all(),
-        ]);
+        $sales = Sale::with('user')->latest()->paginate(10);
+        return view('admin.sales.index', compact('sales'));
+    }
+
+    public function create()
+    {
+        $products = Product::all();
+        return view('admin.sales.create', compact('products'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'items' => 'required|array',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
+            'products' => 'required|array',
+            'products.*.id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
             'discount' => 'nullable|numeric|min:0',
             'payment_method' => 'required|in:cash,gcash,card',
         ]);
 
-        $discount = $data['discount'] ?? 0;
         $total = 0;
+        foreach ($data['products'] as $item) {
+            $product = Product::find($item['id']);
+            $subtotal = $product->price * $item['quantity'];
+            $total += $subtotal;
+        }
 
         $sale = Sale::create([
-            'user_id' => auth()->id(),
-            'total_amount' => 0,
-            'discount' => $discount,
+            'user_id' => Auth::id(),
+            'total_amount' => $total - ($data['discount'] ?? 0),
+            'discount' => $data['discount'] ?? 0,
             'payment_method' => $data['payment_method'],
         ]);
 
-        foreach ($data['items'] as $item) {
-            $product = Product::findOrFail($item['product_id']);
-            $subtotal = $item['quantity'] * $product->price;
-            $total += $subtotal;
-
+        foreach ($data['products'] as $item) {
+            $product = Product::find($item['id']);
             SaleItem::create([
                 'sale_id' => $sale->id,
                 'product_id' => $product->id,
                 'quantity' => $item['quantity'],
                 'price' => $product->price,
-                'subtotal' => $subtotal,
+                'subtotal' => $product->price * $item['quantity'],
             ]);
 
+            // Decrease stock
             $product->decrement('stock', $item['quantity']);
         }
 
-        $sale->update(['total_amount' => $total - $discount]);
+        return redirect()->route('sales.index')->with('success', 'Sale recorded successfully!');
+    }
 
-        return redirect()->route('sales.checkout')->with('success', 'Sale completed!');
+    public function show(Sale $sale)
+    {
+        $sale->load('items.product', 'user');
+        return view('admin.sales.show', compact('sale'));
     }
 }

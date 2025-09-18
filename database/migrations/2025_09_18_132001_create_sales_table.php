@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('user_id')->constrained('users')->cascadeOnDelete();
             $table->decimal('total_amount', 10, 2);
             $table->decimal('discount', 10, 2)->default(0);
             $table->enum('payment_method', ['cash', 'gcash', 'card']);
             $table->timestamps();
+
         });
     }
 

@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name');
+            $table->string('category')->nullable();
             $table->decimal('price', 10, 2);
             $table->integer('stock');
-            $table->integer('stock_alert')->default(5);
+            $table->integer('low_stock_alert')->default(5);
+            $table->string('qr_code')->nullable(); // path to QR image or code string
             $table->timestamps();
         });
     }

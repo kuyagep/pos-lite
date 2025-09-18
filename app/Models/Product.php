@@ -12,14 +12,15 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'category',
         'price',
         'stock',
-        'stock_alert',
+        'low_stock_alert',
+        'qr_code'
     ];
 
-    // Relationships
-    public function sales()
+    public function saleItems()
     {
-        return $this->hasMany(Sale::class);
+        return $this->hasMany(SaleItem::class);
     }
 }

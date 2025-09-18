@@ -11,20 +11,19 @@ class Sale extends Model
     use HasFactory, HasUlids;
 
     protected $fillable = [
-        'product_id',
         'user_id',
-        'quantity',
-        'total_price',
+        'total_amount',
+        'discount',
+        'payment_method'
     ];
 
-    // Relationships
-    public function product()
+    public function cashier()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function user()
+    public function items()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(SaleItem::class);
     }
 }

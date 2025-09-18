@@ -13,22 +13,21 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasUlids;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+
+    // === Role Constants ===
+    public const ROLE_SUPER_ADMIN = 'super_admin';
+    public const ROLE_STORE_ADMIN = 'store_admin';
+    public const ROLE_STAFF       = 'staff';
+
+
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
+
     protected $hidden = [
         'password',
         'remember_token',
@@ -47,11 +46,22 @@ class User extends Authenticatable
         ];
     }
 
-    public function isAdmin(): bool
+    // === Role Helpers ===
+    public function isSuperAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === self::ROLE_SUPER_ADMIN;
     }
-    
+
+    public function isStoreAdmin(): bool
+    {
+        return $this->role === self::ROLE_STORE_ADMIN;
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->role === self::ROLE_STAFF;
+    }
+
     // Relationships
     public function sales()
     {

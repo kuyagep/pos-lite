@@ -33,7 +33,7 @@
                 @forelse($sales as $sale)
                     <tr>
                         <td>{{ $sale->created_at->format('Y-m-d H:i') }}</td>
-                        <td>{{ $sale->user->name ?? 'N/A' }}</td>
+                        <td>{{ $sale->cashier->name ?? 'N/A' }}</td>
                         <td>₱{{ number_format($sale->total_amount, 2) }}</td>
                         <td>₱{{ number_format($sale->discount, 2) }}</td>
                         <td>

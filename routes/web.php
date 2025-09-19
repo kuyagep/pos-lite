@@ -13,7 +13,11 @@ Route::get('/', function () {
 })->name('landing');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-
+    Route::get('/dashboard', function () {
+        $products = Product::all();
+        $reports = DailyReport::latest()->take(5)->get();
+        return view('dashboard', compact('products', 'reports'));
+    })->name('dashboard');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -24,10 +28,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('reports/generate', [DailyReportController::class, 'generate'])->name('reports.generate');
 
     // cashier routes
-    Route::get('pos', [PosController::class, 'index'])->name('pos.index');
-    Route::post('pos/add', [PosController::class, 'addToCart'])->name('pos.add');
-    Route::post('pos/remove', [PosController::class, 'removeFromCart'])->name('pos.remove');
-    Route::post('pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout');
+    Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
+    Route::post('/pos/add', [POSController::class, 'addToCart'])->name('pos.add');
+    Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
+    Route::post('/pos/clear', [POSController::class, 'clearCart'])->name('pos.clear');
+    Route::delete('/pos/remove', [POSController::class, 'removeFromCart'])->name('pos.remove');
 });
 
 

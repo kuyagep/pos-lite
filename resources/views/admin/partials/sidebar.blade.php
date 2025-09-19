@@ -3,9 +3,9 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
         <div class="sidebar-brand-icon">
-            <i class="fas fa-school"></i>
+            <i class="fas fa-store"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">DepEd Admin</div>
+        <div class="sidebar-brand-text mx-3">POSLite</div>
     </a>
 
     <!-- Divider -->
@@ -31,6 +31,12 @@
         <a class="nav-link " href="{{ route('sales.index') }}">
             <i class="fas fa-users"></i>
             <span>Sales</span>
+        </a>
+    </li>
+    <li class="nav-item {{ request()->routeIs('pos.*') ? 'active' : '' }}">
+        <a class="nav-link " href="{{ route('pos.index') }}">
+            <i class="fas fa-users"></i>
+            <span>POS</span>
         </a>
     </li>
 

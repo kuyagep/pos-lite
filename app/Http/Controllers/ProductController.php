@@ -46,6 +46,13 @@ class ProductController extends Controller
         return view('admin.products.edit', compact('product'));
     }
 
+    public function show($id)
+    {
+        $product = Product::findOrFail($id);
+        return view('admin.products.show', compact('product'));
+    }
+
+
     public function update(Request $request, Product $product)
     {
         $data = $request->validate([
@@ -61,9 +68,15 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }
 
-    public function destroy(Product $product)
+    public function destroy($id)
     {
+        $product = Product::findOrFail($id);
+
         $product->delete();
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully!');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product deleted successfully!'
+        ]);
     }
 }

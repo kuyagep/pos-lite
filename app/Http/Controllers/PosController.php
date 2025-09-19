@@ -7,79 +7,117 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class PosController extends Controller
 {
+    // POS Index (scanner + cart)
     public function index()
     {
-        return view('pos.index');
+        $cart = Session::get('cart', []);
+        return view('pos.index', compact('cart'));
     }
 
-    // Add product to cart
+    // Add product by QR (AJAX)
     public function addToCart(Request $request)
     {
-        $product = Product::findOrFail($request->qr_code);
-        $cart = session()->get('cart', []);
+        $request->validate([
+            'qr_code' => 'required|string',
+        ]);
+
+        $product = Product::where('qr_code', $request->qr_code)->firstOrFail();
+
+        $cart = Session::get('cart', []);
 
         if (isset($cart[$product->id])) {
             $cart[$product->id]['quantity']++;
+            $cart[$product->id]['subtotal'] = $cart[$product->id]['quantity'] * $cart[$product->id]['price'];
         } else {
             $cart[$product->id] = [
-                "name" => $product->name,
-                "price" => $product->price,
-                "quantity" => 1
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'quantity' => 1,
+                'subtotal' => $product->price,
             ];
         }
 
-        session()->put('cart', $cart);
-        return response()->json(['success' => true, 'cart' => $cart]);
-    }
+        Session::put('cart', $cart);
 
-    // Remove product from cart
-    public function removeFromCart(Request $request)
-    {
-        $cart = session()->get('cart', []);
-        if (isset($cart[$request->product_id])) {
-            unset($cart[$request->product_id]);
-            session()->put('cart', $cart);
-        }
         return response()->json(['success' => true, 'cart' => $cart]);
     }
 
     // Checkout
     public function checkout(Request $request)
     {
-        $cart = session()->get('cart', []);
+        $cart = Session::get('cart', []);
         if (empty($cart)) {
-            return back()->with('error', 'Cart is empty.');
+            return response()->json(['error' => 'Cart is empty'], 400);
         }
 
-        $total = collect($cart)->sum(function ($item) {
-            return $item['price'] * $item['quantity'];
-        });
+        $discount = $request->input('discount', 0);
+        $customerName = $request->input('customer_name', null);
 
-        $sale = Sale::create([
-            'user_id' => Auth::id(),
-            'total_amount' => $total,
-            'discount' => $request->discount ?? 0,
-            'payment_method' => $request->payment_method,
-        ]);
+        DB::beginTransaction();
+        try {
+            $total = collect($cart)->sum(fn($item) => $item['subtotal']);
+            $grandTotal = max($total - $discount, 0);
 
-        foreach ($cart as $productId => $item) {
-            SaleItem::create([
-                'sale_id' => $sale->id,
-                'product_id' => $productId,
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'subtotal' => $item['price'] * $item['quantity'],
+            $sale = Sale::create([
+                'user_id' => auth()->id(),
+                'total_amount' => $grandTotal,
+                'discount' => $discount,
+                'payment_method' => 'cash', // extend later
+                'notes' => $customerName,   // ✅ save notes/customer name
             ]);
 
-            // Deduct stock
-            $product = Product::find($productId);
-            $product->decrement('stock', $item['quantity']);
+            foreach ($cart as $productId => $item) {
+                SaleItem::create([
+                    'sale_id' => $sale->id,
+                    'product_id' => $productId,
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'subtotal' => $item['subtotal'],
+                ]);
+
+                $product = Product::findOrFail($productId);
+                $product->decrement('stock', $item['quantity']);
+            }
+
+            DB::commit();
+            session()->forget('cart');
+
+            return response()->json(['message' => 'Sale completed!']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    // Clear cart
+    public function clearCart()
+    {
+        Session::forget('cart');
+        return redirect()->route('pos.index')->with('success', 'Cart cleared.');
+    }
+
+    public function removeFromCart(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required',
+        ]);
+
+        $cart = Session::get('cart', []);
+
+        if (isset($cart[$request->product_id])) {
+            unset($cart[$request->product_id]);
+            Session::put('cart', $cart);
         }
 
-        session()->forget('cart');
-        return redirect()->route('sales.index')->with('success', 'Sale completed!');
+        return response()->json([
+            'success' => true,
+            'cart' => $cart
+        ]);
     }
 }

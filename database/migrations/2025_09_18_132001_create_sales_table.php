@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('total_amount', 10, 2);
             $table->decimal('discount', 10, 2)->default(0);
             $table->enum('payment_method', ['cash', 'gcash', 'card']);
+            $table->string('notes')->nullable(); // for customer name or remarks
             $table->timestamps();
 
         });

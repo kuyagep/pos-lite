@@ -31,9 +31,9 @@
                     </thead>
                     <tbody>
                         @forelse($products as $product)
-                            <tr>
+                           <tr id="product-{{ $product->id }}">
                                 <td>{{ $product->name }}</td>
-                                <td>{{ $product->category ?? '-' }}</td>
+                                <td>{{ $product->category ?? 'N/A' }}</td>
                                 <td>₱{{ number_format($product->price, 2) }}</td>
                                 <td>
                                     @if ($product->stock <= $product->low_stock_alert)
@@ -44,19 +44,23 @@
                                 </td>
                                 <td>
                                     @if ($product->qr_code)
-                                       {!! QrCode::size(60)->generate($product->qr_code) !!}
+                                        {!! QrCode::size(60)->generate($product->qr_code) !!}
+                                    @else
+                                        <span class="text-muted">Not generated</span>
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('products.edit', $product) }}" class="btn btn-sm btn-warning">
+                                    <a href="{{ route('products.show', $product->id) }}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary  btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline"
-                                        onsubmit="return confirm('Are you sure to delete this product?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </form>
+
+                                    <button class="btn btn-primary btn-sm delete-btn"
+                                        data-id="{{ $product->id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
                         @empty
@@ -74,3 +78,57 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('.delete-btn').on('click', function(e) {
+                e.preventDefault(); // ✅ prevent default form submission or link action
+
+                var productId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#003399', // ✅ custom theme color
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/products/' + productId,
+                            type: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: response.message,
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                    timer: 1500, // ✅ auto close after 1.5 seconds
+                                    timerProgressBar: true
+                                });
+
+                                // fade-out row removal instead of reload
+                                $('#product-' + productId).fadeOut(500, function() {
+                                    $(this).remove();
+                                });
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'There was an error deleting the product.',
+                                    icon: 'error',
+                                    confirmButtonColor: '#003399'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

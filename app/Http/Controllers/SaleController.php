@@ -13,7 +13,7 @@ class SaleController extends Controller
 {
     public function index()
     {
-        $sales = Sale::with('user')->latest()->paginate(10);
+        $sales = Sale::with('cashier')->latest()->paginate(10);
         return view('admin.sales.index', compact('sales'));
     }
 
@@ -66,7 +66,7 @@ class SaleController extends Controller
 
     public function show(Sale $sale)
     {
-        $sale->load('items.product', 'user');
+        $sale->load('items.product', 'cashier');
         return view('admin.sales.show', compact('sale'));
     }
 }

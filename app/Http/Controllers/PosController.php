@@ -49,7 +49,24 @@ class PosController extends Controller
     }
 
     // Checkout
-    public function checkout(Request $request)
+    public function checkout()
+    {
+        $cart = session()->get('cart', []);
+
+        // Calculate totals
+        $subtotal = collect($cart)->sum(fn($item) => $item['subtotal']);
+        $totalItems = collect($cart)->sum(fn($item) => $item['quantity']);
+
+        return view('pos.checkout', [
+            'cart'       => $cart,
+            'subtotal'   => $subtotal,
+            'totalItems' => $totalItems,
+        ]);
+    }
+
+
+    // Confirm Payment
+    public function confirm(Request $request)
     {
         $cart = Session::get('cart', []);
         if (empty($cart)) {
@@ -58,41 +75,66 @@ class PosController extends Controller
 
         $discount = $request->input('discount', 0);
         $customerName = $request->input('customer_name', null);
+        $paymentMethod = $request->input('payment_method', 'cash'); // ✅ dynamic payment method
 
         DB::beginTransaction();
         try {
+            // Calculate totals
             $total = collect($cart)->sum(fn($item) => $item['subtotal']);
             $grandTotal = max($total - $discount, 0);
 
+            // Create Sale record
             $sale = Sale::create([
-                'user_id' => auth()->id(),
-                'total_amount' => $grandTotal,
-                'discount' => $discount,
-                'payment_method' => 'cash', // extend later
-                'notes' => $customerName,   // ✅ save notes/customer name
+                'user_id'        => auth()->id(),
+                'total_amount'   => $grandTotal,
+                'discount'       => $discount,
+                'payment_method' => $paymentMethod,
+                'notes'          => $customerName, // ✅ Save customer name/notes
             ]);
 
+            // Save Sale Items + Update Stock
             foreach ($cart as $productId => $item) {
                 SaleItem::create([
-                    'sale_id' => $sale->id,
+                    'sale_id'    => $sale->id,
                     'product_id' => $productId,
-                    'quantity' => $item['quantity'],
-                    'price' => $item['price'],
-                    'subtotal' => $item['subtotal'],
+                    'quantity'   => $item['quantity'],
+                    'price'      => $item['price'],
+                    'subtotal'   => $item['subtotal'],
                 ]);
 
+                // Decrement stock
                 $product = Product::findOrFail($productId);
                 $product->decrement('stock', $item['quantity']);
             }
 
             DB::commit();
-            session()->forget('cart');
 
-            return response()->json(['message' => 'Sale completed!']);
+            // Clear cart after success
+            Session::forget('cart');
+
+            return response()->json([
+                'message' => 'Sale completed!',
+                'sale_id' => $sale->id
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    // Receipt Page
+    public function receipt($id)
+    {
+        // ✅ Fetch from DB (instead of session) for persistence
+        $transaction = Sale::with('items.product') // assuming you have TransactionItem model
+            ->find($id);
+
+        if (!$transaction) {
+            return redirect()->route('pos.index')
+                ->with('error', 'Receipt not found!');
+        }
+
+        return view('pos.receipt', compact('transaction'));
     }
 
     // Clear cart

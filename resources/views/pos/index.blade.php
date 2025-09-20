@@ -16,11 +16,10 @@
 
             <div class="col-md-12 col-lg-8">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Cart</h5>
-                                <p class="card-text">Manage your cart items here.</p>
                                 <table class="table table-bordered">
                                     <thead class="bg-primary text-white">
                                         <tr>
@@ -71,41 +70,11 @@
                                         </tr>
                                     </tfoot>
                                 </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <!-- Discount Input -->
-                                <div class="form-group mb-3">
-                                    <label for="discount">Discount (%)</label>
-                                    <input type="number" id="discount" class="form-control" value="0" min="0"
-                                        max="100">
-                                </div>
 
-                                <!-- Payment Method -->
-                                <div class="form-group mb-3">
-                                    <label for="payment_method">Payment Method</label>
-                                    <select id="payment_method" class="form-control">
-                                        <option value="cash">Cash</option>
-                                        <option value="gcash">GCash</option>
-                                        <option value="card">Card</option>
-                                    </select>
-                                </div>
-
-                                <!-- Cart Totals -->
-                                <div id="checkoutTotals" class="border rounded p-3 bg-light">
-                                    <p><strong>Subtotal:</strong> ₱<span id="subtotal">{{ number_format($grandTotal, 2) }}</span></p>
-                                    <p><strong>Total Items:</strong> <span id="totalItems">{{ $totalItems }}</span></p>
-                                    <p><strong>Discount:</strong> <span id="discountDisplay">0%</span></p>
-                                    <h5><strong>Grand Total:</strong> ₱<span id="grandTotal">{{ number_format($grandTotal, 2) }}</span></h5>
-                                </div>
-
-                                <!-- Checkout Button -->
-                                <button id="checkoutBtn" class="btn btn-success w-100 mt-3">
-                                    Checkout
-                                </button>
+                                {{-- Checkout Button --}}
+                                <a href="{{ route('pos.checkout') }}" class="btn btn-success w-100 mt-3">
+                                    Proceed to Checkout
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -158,7 +127,7 @@
 
         // Render cart dynamically
         function updateCart(cart) {
-             window.currentCart = cart; // store for reuse
+            window.currentCart = cart; // store for reuse
             let tbody = $('#cart-body');
             let tfoot = $('#cart-totals');
 
@@ -222,7 +191,8 @@
 
         // 🔥 Recalculate when discount changes
         $(document).on('input', '#discount', function() {
-            updateCart(window.currentCart || {});
+            alert('Discount changed');
+            updateCart(window.currentCart);
         });
 
 

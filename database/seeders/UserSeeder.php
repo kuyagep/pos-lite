@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
         // Store Admin
         User::create([
             'name' => 'Store Admin',
-            'email' => 'storeadmin@poslite.com',
+            'email' => 'store.admin@poslite.com',
             'password' => Hash::make('password'),
             'role' => User::ROLE_STORE_ADMIN,
         ]);
@@ -32,9 +32,9 @@ class UserSeeder extends Seeder
         // Staff
         User::create([
             'name' => 'Staff User',
-            'email' => 'staff@poslite.com',
+            'email' => 'store.staff@poslite.com',
             'password' => Hash::make('password'),
-            'role' => User::ROLE_STAFF,
+            'role' => User::ROLE_STORE_STAFF,
         ]);
     }
 }

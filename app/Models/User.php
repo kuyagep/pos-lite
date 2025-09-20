@@ -17,7 +17,7 @@ class User extends Authenticatable
     // === Role Constants ===
     public const ROLE_SUPER_ADMIN = 'super_admin';
     public const ROLE_STORE_ADMIN = 'store_admin';
-    public const ROLE_STAFF       = 'staff';
+    public const ROLE_STORE_STAFF       = 'store_staff';
 
 
     protected $fillable = [

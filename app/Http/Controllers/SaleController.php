@@ -69,4 +69,6 @@ class SaleController extends Controller
         $sale->load('items.product', 'cashier');
         return view('admin.sales.show', compact('sale'));
     }
+
+   
 }

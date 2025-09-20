@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('role')->default('staff'); // admin, staff
+            $table->string('role')->default('store_staff'); // admin, staff
             $table->rememberToken();
             $table->timestamps();
         });

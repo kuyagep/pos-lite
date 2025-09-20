@@ -7,7 +7,6 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 
 class SaleController extends Controller
 {
@@ -70,5 +69,19 @@ class SaleController extends Controller
         return view('admin.sales.show', compact('sale'));
     }
 
-   
+    public function history(Request $request)
+    {
+        $query = Sale::where('user_id', auth()->id());
+
+        if ($request->filter === 'today') {
+            $query->whereDate('created_at', today());
+        } elseif ($request->filter === 'week') {
+            $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+        }
+        // else 'all' → no extra filter
+
+        $sales = $query->latest()->paginate(10);
+
+        return view('cashier.sales.history', compact('sales'));
+    }
 }

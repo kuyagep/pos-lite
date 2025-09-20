@@ -1,63 +1,54 @@
 @extends('layouts.admin')
 
+@section('title', 'Manage Cashiers')
+
 @section('content')
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800">Cashiers</h1>
+    <h1 class="h3 mb-4 text-gray-800">Cashiers for {{ $store->name }}</h1>
 
-    <!-- Add Cashier Button -->
-    <a href="{{ route('cashiers.create') }}" class="btn btn-primary mb-3">
-        <i class="fas fa-plus"></i> Add Cashier
+    <a href="{{ route('stores.cashiers.create', $store->id) }}" class="btn btn-success mb-3">
+        + Add Cashier
     </a>
 
-    <!-- Cashiers Table -->
-    <div class="card shadow mb-4">
-        <div class="card-header bg-primary py-3">
-            <h6 class="m-0 font-weight-bold text-white">Cashiers List</h6>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if($cashiers->count() > 0)
+        <div class="card shadow mb-4">
+            <div class="card-body">
                 <table class="table table-bordered table-striped">
-                    <thead class="table-dark">
+                    <thead>
                         <tr>
-                            <th>#</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Date Created</th>
+                            <th>Created At</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($cashiers as $index => $cashier)
+                        @foreach($cashiers as $cashier)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
                                 <td>{{ $cashier->name }}</td>
                                 <td>{{ $cashier->email }}</td>
                                 <td>{{ $cashier->created_at->format('M d, Y') }}</td>
                                 <td>
-                                    <a href="{{ route('cashiers.edit', $cashier->id) }}" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <form action="{{ route('cashiers.destroy', $cashier->id) }}"
-                                          method="POST"
-                                          class="d-inline"
-                                          onsubmit="return confirm('Are you sure you want to delete this cashier?');">
+                                    <a href="{{ route('stores.cashiers.edit', [$store->id, $cashier->id]) }}" class="btn btn-sm btn-primary">Edit</a>
+
+                                    <form action="{{ route('stores.cashiers.destroy', [$store->id, $cashier->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
+                                        <button class="btn btn-sm btn-danger">Delete</button>
                                     </form>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center">No cashiers found.</td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
+    @else
+        <p>No cashiers found for this store.</p>
+    @endif
 </div>
 @endsection

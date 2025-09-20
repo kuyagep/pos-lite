@@ -4,6 +4,9 @@ use App\Http\Controllers\CashierController;
 use App\Http\Controllers\CashierDashboardController;
 use App\Http\Controllers\DailyReportController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Owner\OwnerStoreController;
+use App\Http\Controllers\Owner\StoreCashierController;
+use App\Http\Controllers\Owner\StoreProductController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
@@ -49,12 +52,32 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPER_ADMIN])->prefix('app')->na
 // Store Admin routes
 Route::middleware(['auth', 'role:' . User::ROLE_STORE_ADMIN])->group(function () {
     Route::get('/admin', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/stores', [OwnerStoreController::class, 'index'])->name('stores.index');
+    // Route::get('/stores/{store}/products', [OwnerProductController::class, 'index'])->name('stores.products.index');
     Route::resource('cashiers', CashierController::class);
     Route::resource('products', ProductController::class);
     Route::get('/sales/summary', [SaleController::class, 'summary'])->name('sales.summary');
     Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('reports', [DailyReportController::class, 'index'])->name('reports.index');
     Route::post('reports/generate', [DailyReportController::class, 'generate'])->name('reports.generate');
+
+    // Multi-store Product Management
+    Route::get('stores/{store}/products', [StoreProductController::class, 'index'])->name('stores.products.index');
+    Route::get('stores/{store}/products/create', [StoreProductController::class, 'create'])->name('stores.products.create');
+    Route::post('stores/{store}/products', [StoreProductController::class, 'store'])->name('stores.products.store');
+    Route::get('stores/{store}/products/{product}/edit', [StoreProductController::class, 'edit'])->name('stores.products.edit');
+    Route::put('stores/{store}/products/{product}', [StoreProductController::class, 'update'])->name('stores.products.update');
+    Route::delete('stores/{store}/products/{product}', [StoreProductController::class, 'destroy'])->name('stores.products.destroy');
+
+    // Cashiers per store
+    Route::get('/stores/{store}/cashiers', [StoreCashierController::class, 'index'])->name('stores.cashiers.index');
+    Route::get('/stores/{store}/cashiers/create', [StoreCashierController::class, 'create'])->name('stores.cashiers.create');
+    Route::post('/stores/{store}/cashiers', [StoreCashierController::class, 'store'])->name('stores.cashiers.store');
+    Route::get('/stores/{store}/cashiers/{cashier}/edit', [StoreCashierController::class, 'edit'])->name('stores.cashiers.edit');
+    Route::put('/stores/{store}/cashiers/{cashier}', [StoreCashierController::class, 'update'])->name('stores.cashiers.update');
+    Route::delete('/stores/{store}/cashiers/{cashier}', [StoreCashierController::class, 'destroy'])->name('stores.cashiers.destroy');
+
+
 });
 
 // Store Staff routes

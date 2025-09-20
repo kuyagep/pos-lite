@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignUlid('created_by')->nullable()
                 ->constrained('users')
                 ->cascadeOnDelete();
+            $table->foreignId('store_id')->nullable()->constrained('stores')->onDelete('cascade');
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

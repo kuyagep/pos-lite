@@ -11,6 +11,7 @@ class Product extends Model
     use HasFactory, HasUlids;
 
     protected $fillable = [
+        'store_id',
         'name',
         'category',
         'price',
@@ -22,5 +23,10 @@ class Product extends Model
     public function saleItems()
     {
         return $this->hasMany(SaleItem::class);
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
     }
 }

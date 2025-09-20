@@ -85,6 +85,7 @@ class PosController extends Controller
 
             // Create Sale record
             $sale = Sale::create([
+                'store_id' => $request->user()->store_id, // assign the logged-in user's store
                 'user_id'        => auth()->id(),
                 'total_amount'   => $grandTotal,
                 'discount'       => $discount,

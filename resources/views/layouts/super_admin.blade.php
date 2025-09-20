@@ -43,25 +43,28 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">Management</div>
-
-            <li class="nav-item {{ request()->routeIs('owners.*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('app.owners.index') }}">
+            <!-- Owners & Stores Section -->
+            <li
+                class="nav-item {{ request()->routeIs('app.owners.*') || request()->routeIs('app.stores.*') ? 'active' : '' }}">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOwners"
+                    aria-expanded="true" aria-controls="collapseOwners">
                     <i class="fas fa-user-tie"></i>
-                    <span>Manage Owners</span>
+                    <span>Clients</span>
                 </a>
-            </li>
-
-            <li class="nav-item {{ request()->routeIs('app.stores.*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('app.stores.index') }}">
-                    <i class="fas fa-store"></i>
-                    <span>Manage Stores</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-users"></i>
-                    <span>Users</span></a>
+                <div id="collapseOwners"
+                    class="collapse {{ request()->routeIs('app.owners.*') || request()->routeIs('app.stores.*') ? 'show' : '' }}"
+                    aria-labelledby="headingOwners" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item {{ request()->routeIs('app.owners.index') ? 'active' : '' }}"
+                            href="{{ route('app.owners.index') }}">
+                            <i class="fas fa-users"></i> Owners
+                        </a>
+                        <a class="collapse-item {{ request()->routeIs('app.stores.index') ? 'active' : '' }}"
+                            href="{{ route('app.stores.index') }}">
+                            <i class="fas fa-store"></i> Stores
+                        </a>
+                    </div>
+                </div>
             </li>
 
             <hr class="sidebar-divider d-none d-md-block">

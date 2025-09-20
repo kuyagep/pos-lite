@@ -2,7 +2,7 @@
     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
         <i class="fa fa-bars"></i>
     </button>
-    <h5 class="m-0 fw-bold text-white">POSLite</h5>
+    <h5 class="m-0 fw-bold text-white">Store Name</h5>
 
     <ul class="navbar-nav ml-auto">
         <!-- Nav Item - User Information -->

@@ -25,6 +25,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'store_id',
     ];
 
 
@@ -76,5 +77,10 @@ class User extends Authenticatable
     public function stores()
     {
         return $this->hasMany(Store::class, 'owner_id');
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
     }
 }

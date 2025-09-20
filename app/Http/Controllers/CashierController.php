@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +15,9 @@ class CashierController extends Controller
      */
     public function index()
     {
-        // Show only users with role cashier
-        $cashiers = User::where('role',  User::ROLE_STORE_STAFF)->get();
+
+        // Get all cashiers with their store
+        $cashiers = User::where('role',  User::ROLE_STORE_STAFF)->with('store')->get();
 
         return view('admin.cashiers.index', compact('cashiers'));
     }
@@ -25,7 +27,8 @@ class CashierController extends Controller
      */
     public function create()
     {
-        return view('admin.cashiers.create');
+        $stores = Store::where('owner_id',  Auth::user()->id)->get(); // Select store for cashier
+        return view('admin.cashiers.create', compact('stores'));
     }
 
     /**
@@ -37,6 +40,7 @@ class CashierController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
+            'store_id' => 'required|exists:stores,id',
         ]);
 
         $cashier = User::create([
@@ -44,8 +48,9 @@ class CashierController extends Controller
             'email'      => $request->email,
             'password'   => Hash::make($request->password),
             'role'       => User::ROLE_STORE_STAFF,
-            'created_by' => Auth::user()->id, // ✅ ULID of store admin/owner
+            'store_id' => $request->store_id,
         ]);
+
 
         return redirect()->route('cashiers.index', compact("cashier"))->with('success', 'Cashier added successfully!');
     }
@@ -55,7 +60,8 @@ class CashierController extends Controller
      */
     public function edit(User $cashier)
     {
-        return view('admin.cashiers.edit', compact('cashier'));
+        $stores =  Store::where('owner_id',  Auth::user()->id)->get(); // Select store for cashier
+        return view('admin.cashiers.edit',  compact('cashier', 'stores'));
     }
 
     /**
@@ -64,18 +70,19 @@ class CashierController extends Controller
     public function update(Request $request, User $cashier)
     {
         $request->validate([
-            'name'  => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $cashier->id,
-            'password' => 'nullable|string|min:6|confirmed',
+            'password' => 'nullable|confirmed|min:6',
+            'store_id' => 'required|exists:stores,id',
         ]);
 
         $cashier->update([
-            'name'  => $request->name,
+            'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->filled('password')
-                ? Hash::make($request->password)
-                : $cashier->password,
+            'password' => $request->password ? Hash::make($request->password) : $cashier->password,
+            'store_id' => $request->store_id,
         ]);
+
 
         return redirect()->route('cashiers.index')->with('success', 'Cashier updated successfully!');
     }

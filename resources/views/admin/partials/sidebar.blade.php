@@ -21,12 +21,10 @@
 
     <!-- Divider -->
     <hr class="sidebar-divider">
-
-    <!-- Nav Item - Products -->
-    <li class="nav-item {{ request()->routeIs('products.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('products.index') }}">
-            <i class="fas fa-box"></i>
-            <span>Products</span>
+     <li class="nav-item {{ request()->routeIs('stores.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('stores.index') }}">
+            <i class="fas fa-user-friends"></i>
+            <span>Manage Stores</span>
         </a>
     </li>
 
@@ -46,13 +44,7 @@
         </a>
     </li>
 
-    <!-- Nav Item - Cashiers -->
-    <li class="nav-item {{ request()->routeIs('cashiers.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('cashiers.index') }}">
-            <i class="fas fa-user-tie"></i>
-            <span>Cashiers</span>
-        </a>
-    </li>
+
 
 
     <!-- Divider -->

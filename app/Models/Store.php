@@ -20,4 +20,14 @@ class Store extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
+
+    public function cashiers()
+    {
+        return $this->hasMany(User::class)->where('role', User::ROLE_STORE_STAFF);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

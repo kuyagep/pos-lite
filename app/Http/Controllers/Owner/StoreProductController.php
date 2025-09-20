@@ -1,24 +1,26 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Owner;
 
+use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class StoreProductController extends Controller
 {
+    // List products for a specific store
     public function index(Store $store)
     {
         $this->authorizeStore($store);
+
         $products = $store->products()->latest()->get();
-        return view('admin.products.index', compact('store','products'));
+        return view('admin.products.index', compact('store', 'products'));
     }
 
     public function create(Store $store)
     {
         $this->authorizeStore($store);
-
         return view('admin.products.create', compact('store'));
     }
 
@@ -26,7 +28,7 @@ class ProductController extends Controller
     {
         $this->authorizeStore($store);
 
-        $data = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'nullable|string|max:255',
             'price' => 'required|numeric|min:0',
@@ -34,36 +36,26 @@ class ProductController extends Controller
             'low_stock_alert' => 'nullable|integer|min:1',
         ]);
         $qrCodeValue = uniqid();
-        $product = Product::create($data);
+        $store->products()->create($request->only('name', 'category', 'price', 'stock', 'low_stock_alert', $qrCodeValue));
 
-        // Generate QR code
-        // $qrPath = "qr_codes/{$product->id}.png";
-        // Storage::disk('public')->put($qrPath, QrCode::format('png')->size(200)->generate($product->id));
-        $product->update(['qr_code' => $qrCodeValue]);
-
-        return redirect()->route('products.index')->with('success', 'Product created successfully!');
+        return redirect()->route('stores.products.index', $store->id)
+            ->with('success', 'Product added successfully.');
     }
 
     public function edit(Store $store, Product $product)
     {
         $this->authorizeStore($store);
         $this->authorizeStoreProduct($store, $product);
-        return view('admin.products.edit', compact('store','product'));
-    }
 
-    public function show($id)
-    {
-        $product = Product::findOrFail($id);
-        return view('admin.products.show', compact('product'));
+        return view('admin.products.edit', compact('store', 'product'));
     }
-
 
     public function update(Request $request, Store $store, Product $product)
     {
         $this->authorizeStore($store);
         $this->authorizeStoreProduct($store, $product);
 
-        $data = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'nullable|string|max:255',
             'price' => 'required|numeric|min:0',
@@ -71,9 +63,10 @@ class ProductController extends Controller
             'low_stock_alert' => 'nullable|integer|min:1',
         ]);
 
-        $product->update($data);
+        $product->update($request->only('name', 'category', 'price', 'stock', 'low_stock_alert',));
 
-        return redirect()->route('stores.products.index',  $store->id)->with('success', 'Product updated successfully!');
+        return redirect()->route('stores.products.index', $store->id)
+            ->with('success', 'Product updated successfully.');
     }
 
     public function destroy(Store $store, Product $product)
@@ -82,11 +75,7 @@ class ProductController extends Controller
         $this->authorizeStoreProduct($store, $product);
 
         $product->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Product deleted successfully!'
-        ]);
+        return back()->with('success', 'Product deleted successfully.');
     }
 
     // --- Authorization Helpers ---

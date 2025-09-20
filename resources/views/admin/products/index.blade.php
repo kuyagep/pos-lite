@@ -1,82 +1,50 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 text-primary">Products</h1>
-        <a href="{{ route('products.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Add Product
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Products for {{ $store->name }}</h4>
+        <a href="{{ route('stores.products.create', $store->id) }}" class="btn btn-sm btn-success">
+            + Add Product
         </a>
     </div>
 
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
+    @if($products->count())
     <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-primary text-white">
-            <h6 class="m-0 font-weight-bold">Product List</h6>
-        </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>QR</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($products as $product)
-                           <tr id="product-{{ $product->id }}">
-                                <td>{{ $product->name }}</td>
-                                <td>{{ $product->category ?? 'N/A' }}</td>
-                                <td>₱{{ number_format($product->price, 2) }}</td>
-                                <td>
-                                    @if ($product->stock <= $product->low_stock_alert)
-                                        <span class="badge badge-danger">{{ $product->stock }} (Low)</span>
-                                    @else
-                                        <span class="badge badge-success">{{ $product->stock }}</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if ($product->qr_code)
-                                        {!! QrCode::size(60)->generate($product->qr_code) !!}
-                                    @else
-                                        <span class="text-muted">Not generated</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="{{ route('products.show', $product->id) }}" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary  btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-
-                                    <button class="btn btn-primary btn-sm delete-btn"
-                                        data-id="{{ $product->id }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center">No products found.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="mt-3">
-                {{ $products->links() }}
-            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($products as $product)
+                    <tr>
+                        <td>{{ $product->name }}</td>
+                        <td>{{ number_format($product->price,2) }}</td>
+                        <td>{{ $product->stock ?? '-' }}</td>
+                        <td>
+                            <a href="{{ route('stores.products.edit', [$store->id, $product->id]) }}" class="btn btn-sm btn-primary">Edit</a>
+                            <form action="{{ route('stores.products.destroy', [$store->id, $product->id]) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this product?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
+    @else
+    <p>No products added for this store yet.</p>
+    @endif
+</div>
 @endsection
 @push('scripts')
     <script>

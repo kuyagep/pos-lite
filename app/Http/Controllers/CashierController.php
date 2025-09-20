@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class CashierController extends Controller
@@ -43,7 +44,7 @@ class CashierController extends Controller
             'email'      => $request->email,
             'password'   => Hash::make($request->password),
             'role'       => User::ROLE_STORE_STAFF,
-            'created_by' => auth()->id(), // ✅ ULID of store admin/owner
+            'created_by' => Auth::user()->id, // ✅ ULID of store admin/owner
         ]);
 
         return redirect()->route('cashiers.index', compact("cashier"))->with('success', 'Cashier added successfully!');

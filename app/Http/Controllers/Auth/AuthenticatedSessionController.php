@@ -31,8 +31,13 @@ class AuthenticatedSessionController extends Controller
 
         if (Auth::user()->role === User::ROLE_STORE_ADMIN) {
             return redirect()->route('admin.dashboard');
-        } elseif (Auth::user()->role === User::ROLE_STORE_STAFF) {
+        }
+        elseif (Auth::user()->role === User::ROLE_STORE_STAFF) {
             return redirect()->route('cashier.dashboard');
+        }
+
+        if (Auth::user()->role === User::ROLE_SUPER_ADMIN) {
+            return redirect()->route('app.dashboard');
         }
 
         return redirect('/'); // default fallback

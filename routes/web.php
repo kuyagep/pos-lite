@@ -7,6 +7,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SuperAdmin\OwnerController;
+use App\Http\Controllers\SuperAdmin\StoreController;
+use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
 use App\Models\DailyReport;
 use App\Models\Product;
 use App\Models\User;
@@ -35,36 +38,33 @@ Route::middleware(['auth', 'subscription'])->group(function () {
 //     ->middleware(['auth', 'subscription:reports']);
 
 
-// Super Admin routes
-// Route::middleware(['auth', 'role:' . User::ROLE_SUPER_ADMIN])->group(function () {
-//     Route::resource('plans', PlanController::class);
-// });
+//Super Admin routes
+Route::middleware(['auth', 'role:' . User::ROLE_SUPER_ADMIN])->prefix('app')->name('app.')->group(function () {
+    // Route::resource('plans', PlanController::class);
+    Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('owners', OwnerController::class);
+    Route::resource('stores', StoreController::class);
+});
 
 // Store Admin routes
 Route::middleware(['auth', 'role:' . User::ROLE_STORE_ADMIN])->group(function () {
     Route::get('/admin', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
-
+    Route::resource('cashiers', CashierController::class);
     Route::resource('products', ProductController::class);
-
     Route::get('/sales/summary', [SaleController::class, 'summary'])->name('sales.summary');
     Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
-
     Route::get('reports', [DailyReportController::class, 'index'])->name('reports.index');
     Route::post('reports/generate', [DailyReportController::class, 'generate'])->name('reports.generate');
-
-    Route::resource('cashiers', CashierController::class);
 });
 
-// Staff routes
+// Store Staff routes
 Route::middleware(['auth', 'role:' . User::ROLE_STORE_STAFF])->group(function () {
     Route::get('/dashboard', [CashierDashboardController::class, 'index'])->name('cashier.dashboard');
-    // cashier routes
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::post('/pos/add', [POSController::class, 'addToCart'])->name('pos.add');
     Route::get('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
     Route::post('/pos/clear', [POSController::class, 'clearCart'])->name('pos.clear');
     Route::delete('/pos/remove', [POSController::class, 'removeFromCart'])->name('pos.remove');
-
     Route::post('/pos/confirm', [PosController::class, 'confirm'])->name('pos.confirm');
     Route::get('/pos/receipt/{id}', [PosController::class, 'receipt'])->name('pos.receipt');
 

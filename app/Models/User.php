@@ -59,7 +59,7 @@ class User extends Authenticatable
 
     public function isStaff(): bool
     {
-        return $this->role === self::ROLE_STAFF;
+        return $this->role === self::ROLE_STORE_STAFF;
     }
 
     // Relationships
@@ -71,5 +71,10 @@ class User extends Authenticatable
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function stores()
+    {
+        return $this->hasMany(Store::class, 'owner_id');
     }
 }

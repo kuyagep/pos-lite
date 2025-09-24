@@ -35,26 +35,27 @@
                     <table class="table table-bordered table-striped">
                         <thead class="table-dark">
                             <tr>
-                                <th>Date</th>
                                 <th>Receipt No</th>
                                 <th>Total Amount</th>
                                 <th>Discount</th>
                                 <th>Payment Method</th>
+                                <th>Date</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($sales as $sale)
                                 <tr>
-                                    <td>{{ $sale->created_at->format('Y-m-d H:i') }}</td>
+
                                     <td>#{{ $sale->id }}</td>
                                     <td>₱{{ number_format($sale->total_amount, 2) }}</td>
                                     <td>₱{{ number_format($sale->discount, 2) }}</td>
                                     <td>{{ ucfirst($sale->payment_method) }}</td>
+                                    <td>{{ $sale->created_at->format('Y-m-d H:i') }}</td>
                                     <td>
                                     <a href="{{ route('pos.receipt', $sale->id) }}"
-                                       class="btn btn-sm btn-primary">
-                                        <i class="fas fa-receipt"></i> View Receipt
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-receipt"></i>
                                     </a>
                                 </td>
                                 </tr>

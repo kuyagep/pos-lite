@@ -22,6 +22,33 @@
                 </form>
             </div>
         </div>
+        {{-- <!-- Summary -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5>Total Sales</h5>
+                        <p class="h4">₱{{ number_format($totalSales, 2) }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h5>Total Transactions</h5>
+                        <p class="h4">{{ $totalTransactions }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5>Total Discounts</h5>
+                        <p class="h4">₱{{ number_format($totalDiscounts, 2) }}</p>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
 
         <!-- Sales Table -->
         <div class="card ">

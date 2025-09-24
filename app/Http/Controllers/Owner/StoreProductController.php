@@ -27,8 +27,8 @@ class StoreProductController extends Controller
     private function generateUniqueQrCode()
     {
         do {
-            // Generate a 10-digit random number
-            $qrCode = random_int(1000000000, 9999999999);
+            // Generate a 7-digit random number
+            $qrCode = random_int(1000000, 9999999);
         } while (\App\Models\Product::where('qr_code', $qrCode)->exists());
 
         return $qrCode;

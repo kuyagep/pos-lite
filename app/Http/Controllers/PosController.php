@@ -17,14 +17,25 @@ class PosController extends Controller
      */
     public function index()
     {
-        $cashier = Auth::user();
-        $store   = $cashier->store;
-        $products = $store->products()->where('stock', '>', 0)->get();
-
         $cart = Session::get('cart', []);
 
-        return view('pos.index', compact('cart', 'products'));
+        $cashier = Auth::user();
+        $store   = $cashier->store;
+
+        // ✅ Unique categories from products
+        $categories = Product::where('store_id', $store->id)
+            ->select('category')
+            ->distinct()
+            ->pluck('category')
+            ->filter()
+            ->values();
+
+        // ✅ All products of this store
+        $products = Product::where('store_id', $store->id)->get();
+
+        return view('pos.index', compact('cart', 'products', 'categories'));
     }
+
 
     /**
      * Add product by QR (AJAX request)
@@ -175,21 +186,16 @@ class PosController extends Controller
      */
     public function removeFromCart(Request $request)
     {
-        $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
-        ]);
-
-        $cart = Session::get('cart', []);
+        $cart = session()->get('cart', []);
 
         if (isset($cart[$request->product_id])) {
             unset($cart[$request->product_id]);
-            Session::put('cart', $cart);
+            session()->put('cart', $cart);
+
+            return response()->json(['success' => true, 'cart' => $cart]);
         }
 
-        return response()->json([
-            'success' => true,
-            'cart'    => $cart
-        ]);
+        return response()->json(['success' => false, 'message' => 'Item not found in cart']);
     }
 
     /**

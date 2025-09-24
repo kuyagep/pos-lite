@@ -42,7 +42,14 @@
                     </div>
                 </div>
 
-                <div class="row mb-3">
+
+                <!-- Products -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">Available Products</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
                     <!-- Search Bar -->
                     <div class="col-md-6 mx-auto">
                         <!-- Search Bar -->
@@ -62,22 +69,16 @@
                         </button>
                     @endforeach
                 </div>
-                <!-- Products -->
-                <div class="card">
-                    <div class="card-header">
-                        <h6 class="m-0 font-weight-bold text-primary">Available Products</h6>
-                    </div>
-                    <div class="card-body">
                         <div id="product-list" class="row g-4">
                             @foreach ($products as $product)
-                                <div class="col-md-3 mb-3 product-card" data-category="{{ $product->category }}"
+                                <div class="col-md-3 mb-3 product-card "  data-category="{{ $product->category }}"
                                     data-name="{{ strtolower($product->name) }}">
-                                    <div class="card h-100">
+                                    <div class="card h-100 product-tile">
                                         <img src="{{ $product->image_url ?? 'https://placehold.co/200' }}"
                                             class="card-img-top img-fluid" style="height:150px; object-fit:cover;"
                                             alt="{{ $product->name }}">
                                         <div class="card-body text-center d-flex flex-column">
-                                            <h6 class="card-title">{{ $product->name }}</h6>
+                                            <h6 class="card-title text-success">{{ $product->name }}</h6>
                                             <p class="mb-1 text-muted">₱{{ number_format($product->price, 2) }}</p>
                                             <small class="text-secondary">Stock: {{ $product->stock }}</small>
                                             <button class="btn btn-sm btn-success mt-auto add-to-cart"

@@ -6,7 +6,7 @@
         <div class="card-body">
             <!-- Header -->
             <div class="text-center mb-4">
-                <h3 class="text-primary">Store Receipt</h3>
+                <h3 class="text-primary">{{$store->name}}</h3>
                 <p class="mb-0">Thank you for your purchase!</p>
                 <small>{{ now()->format('F d, Y h:i A') }}</small>
             </div>

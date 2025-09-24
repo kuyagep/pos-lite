@@ -1,10 +1,12 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container-fluid">
+<div >
     <h4>Add Product to {{ $store->name }}</h4>
 
-    <form action="{{ route('stores.products.store', $store->id) }}" method="POST">
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ route('stores.products.store', $store->id) }}" method="POST">
         @csrf
 
         <div class="form-group mb-3">
@@ -30,8 +32,10 @@
             <input type="number" name="low_stock_alert" class="form-control" value="{{ old('low_stock_alert') }}">
         </div>
 
-        <button type="submit" class="btn btn-success">Add Product</button>
-        <a href="{{ route('stores.products.index', $store->id) }}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary btn-sm">Add Product</button>
+        <a href="{{ route('stores.products.index', $store->id) }}" class="btn btn-secondary btn-sm">Cancel</a>
     </form>
+        </div>
+    </div>
 </div>
 @endsection

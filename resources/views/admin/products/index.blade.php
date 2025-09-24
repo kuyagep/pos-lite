@@ -1,50 +1,58 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Products for {{ $store->name }}</h4>
-        <a href="{{ route('stores.products.create', $store->id) }}" class="btn btn-sm btn-success">
-            + Add Product
-        </a>
-    </div>
-
-    @if($products->count())
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($products as $product)
-                    <tr>
-                        <td>{{ $product->name }}</td>
-                        <td>{{ number_format($product->price,2) }}</td>
-                        <td>{{ $product->stock ?? '-' }}</td>
-                        <td>
-                            <a href="{{ route('stores.products.edit', [$store->id, $product->id]) }}" class="btn btn-sm btn-primary">Edit</a>
-                            <form action="{{ route('stores.products.destroy', [$store->id, $product->id]) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this product?')">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+    <div >
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Products for {{ $store->name }}</h4>
+            <a href="{{ route('stores.products.create', $store->id) }}" class="btn btn-sm btn-primary">
+                + Add Product
+            </a>
         </div>
+
+        @if ($products->count())
+            <div class="card mb-4">
+                 <div class="card-header bg-primary text-white">
+                    <div class="title-header font-weight-bold">Product List</div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($products as $product)
+                                <tr>
+                                    <td>{{ $product->name }}</td>
+                                    <td>{{ number_format($product->price, 2) }}</td>
+                                    <td>{{ $product->stock ?? '-' }}</td>
+                                    <td class="text-center">
+                                        <a href="{{ route('stores.products.show', [$store->id, $product->id]) }}"
+                                            class="btn btn-sm btn-primary"> <i class="fas fa-eye"></i> </a>
+                                        <a href="{{ route('stores.products.edit', [$store->id, $product->id]) }}"
+                                            class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> </a>
+                                        <form action="{{ route('stores.products.destroy', [$store->id, $product->id]) }}"
+                                            method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Delete this product?')"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @else
+            <p>No products added for this store yet.</p>
+        @endif
     </div>
-    @else
-    <p>No products added for this store yet.</p>
-    @endif
-</div>
 @endsection
 @push('scripts')
     <script>

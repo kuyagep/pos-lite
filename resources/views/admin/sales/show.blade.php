@@ -1,47 +1,70 @@
 @extends('layouts.admin')
 
 @section('content')
-<h1 class="h3 text-primary mb-4">Sale Receipt</h1>
+<div class="container mt-4">
+    <div class="card mb-4">
+        <div class="card-body">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h3 class="text-primary">{{$store->name}}</h3>
+                <p class="mb-0">Thank you for your purchase!</p>
+                <small>{{ now()->format('F d, Y h:i A') }}</small>
+            </div>
+             <!-- Transaction Info -->
+            <div class="mb-3">
+                <span><strong>Receipt No:</strong> {{ $sale->id }}</span> <br>
+                <span><strong>Date:</strong> {{ $sale->created_at->format('M d, Y h:i A') }}</span> <br>
+                <span><strong>Cashier:</strong> {{ $sale->cashier->name ?? 'N/A' }}</span> <br>
+                <span><strong>Payment Method:</strong> {{ ucfirst($sale->payment_method) }}</span> <br>
+                @if($sale->notes)
+                    <span><strong>Customer:</strong> {{ $sale->notes }}</span>
+                @endif
+            </div>
 
-<div class="card shadow">
-    <div class="card-body">
-        <h5>Sale ID: {{ $sale->id }}</h5>
-        <p><strong>Date:</strong> {{ $sale->created_at->format('Y-m-d H:i') }}</p>
-        <p><strong>Cashier:</strong> {{ $sale->user->name ?? 'N/A' }}</p>
-        <p><strong>Payment Method:</strong> {{ strtoupper($sale->payment_method) }}</p>
-
-        <hr>
-
-        <h6>Items</h6>
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead class="thead-light">
+            <hr>
+            <table class="table table-sm table-bordered">
+                <thead class="bg-primary text-white">
                     <tr>
                         <th>Product</th>
-                        <th>Price</th>
                         <th>Qty</th>
-                        <th>Subtotal</th>
+                        <th>Price</th>
+                        <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
-                @foreach($sale->items as $item)
-                    <tr>
-                        <td>{{ $item->product->name }}</td>
-                        <td>₱{{ number_format($item->price, 2) }}</td>
-                        <td>{{ $item->quantity }}</td>
-                        <td>₱{{ number_format($item->subtotal, 2) }}</td>
-                    </tr>
-                @endforeach
+                    @foreach($sale->items as $item)
+                        <tr>
+                            <td>{{ $item->product->name ?? 'Deleted Product' }}</td>
+                            <td>{{ $item->quantity }}</td>
+                            <td>₱{{ number_format($item->price, 2) }}</td>
+                            <td>₱{{ number_format($item->subtotal, 2) }}</td>
+                        </tr>
+                    @endforeach
+
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end"><strong>Subtotal</strong></td>
+                        <td class="text-end">₱{{ number_format($sale->items->sum('subtotal'), 2) }}</td>
+                    </tr>
+                    @if($sale->discount > 0)
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Discount</strong></td>
+                            <td class="text-end">- ₱{{ number_format($sale->discount, 2) }}</td>
+                        </tr>
+                    @endif
+                    <tr>
+                        <td colspan="3" class="text-end"><strong>Grand Total</strong></td>
+                        <td class="text-end fw-bold">₱{{ number_format($sale->total_amount, 2) }}</td>
+                    </tr>
+                </tfoot>
             </table>
-        </div>
 
-        <div class="mt-3">
-            <p><strong>Discount:</strong> ₱{{ number_format($sale->discount, 2) }}</p>
-            <h5 class="text-success"><strong>Total:</strong> ₱{{ number_format($sale->total_amount, 2) }}</h5>
+            <div class="mt-3">
+                <a href="{{ route('stores.sales.index', $sale->store->id) }}" class="btn btn-secondary">Back</a>
+                <button onclick="window.print()" class="btn btn-primary">Print Receipt</button>
+            </div>
         </div>
-
-        <a href="{{ route('sales.index') }}" class="btn btn-secondary mt-3">Back to Sales</a>
     </div>
 </div>
 @endsection

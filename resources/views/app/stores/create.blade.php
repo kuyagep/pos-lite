@@ -3,7 +3,9 @@
 @section('content')
     <h1 class="h3 mb-4 text-gray-800">Add Store</h1>
 
-    <form action="{{ route('app.stores.store') }}" method="POST">
+<div class="card">
+    <div class="card-body">
+         <form action="{{ route('app.stores.store') }}" method="POST">
         @csrf
         <div class="form-group">
             <label>Store Name</label>
@@ -21,7 +23,7 @@
             <label>Address</label>
             <input type="text" name="address" class="form-control">
         </div>
-       
+
         <!-- Owner (hidden field if pre-selected) -->
         @if ($owner)
             <input type="hidden" name="owner_id" value="{{ $owner->id }}">
@@ -45,4 +47,6 @@
         <button type="submit" class="btn btn-success">Save</button>
         <a href="{{ route('app.stores.index') }}" class="btn btn-secondary">Cancel</a>
     </form>
+    </div>
+</div>
 @endsection

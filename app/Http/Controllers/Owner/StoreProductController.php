@@ -24,6 +24,16 @@ class StoreProductController extends Controller
         return view('admin.products.create', compact('store'));
     }
 
+    private function generateUniqueQrCode()
+    {
+        do {
+            // Generate a 10-digit random number
+            $qrCode = random_int(1000000000, 9999999999);
+        } while (\App\Models\Product::where('qr_code', $qrCode)->exists());
+
+        return $qrCode;
+    }
+
     public function store(Request $request, Store $store)
     {
         $this->authorizeStore($store);
@@ -35,8 +45,16 @@ class StoreProductController extends Controller
             'stock' => 'required|integer|min:0',
             'low_stock_alert' => 'nullable|integer|min:1',
         ]);
-        $qrCodeValue = uniqid();
-        $store->products()->create($request->only('name', 'category', 'price', 'stock', 'low_stock_alert', $qrCodeValue));
+        $qrCodeValue = $this->generateUniqueQrCode(); // 10-digit numeric QR code // generate unique QR
+
+        $store->products()->create([
+            'name'            => $request->name,
+            'category'        => $request->category,
+            'price'           => $request->price,
+            'stock'           => $request->stock,
+            'low_stock_alert' => $request->low_stock_alert,
+            'qr_code'         => $qrCodeValue, // ✅ explicitly add this field
+        ]);
 
         return redirect()->route('stores.products.index', $store->id)
             ->with('success', 'Product added successfully.');
@@ -67,6 +85,16 @@ class StoreProductController extends Controller
 
         return redirect()->route('stores.products.index', $store->id)
             ->with('success', 'Product updated successfully.');
+    }
+
+    public function show(Store $store, Product $product)
+    {
+        // ✅ Ensure product belongs to this store (security check)
+        if ($product->store_id !== $store->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('admin.products.show', compact('store', 'product'));
     }
 
     public function destroy(Store $store, Product $product)

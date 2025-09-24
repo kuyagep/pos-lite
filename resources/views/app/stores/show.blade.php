@@ -1,10 +1,10 @@
 @extends('layouts.super_admin')
 
 @section('content')
-<div class="container-fluid">
+<div>
     <h1 class="h3 mb-4 text-gray-800">Store Details</h1>
 
-    <div class="card shadow mb-4">
+    <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">{{ $store->name }}</h6>
             <a href="{{ route('app.stores.index') }}" class="btn btn-secondary btn-sm">Back to Stores</a>

@@ -6,7 +6,9 @@
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Edit Cashier: {{ $cashier->name }}</h1>
 
-    <form action="{{ route('stores.cashiers.update', [$store->id, $cashier->id]) }}" method="POST">
+   <div class="card">
+    <div class="card-body">
+         <form action="{{ route('stores.cashiers.update', [$store->id, $cashier->id]) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -30,8 +32,10 @@
             <input type="password" name="password_confirmation" class="form-control">
         </div>
 
-        <button type="submit" class="btn btn-primary">Update Cashier</button>
-        <a href="{{ route('stores.cashiers.index', $store->id) }}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-sm btn-primary">Update Cashier</button>
+        <a href="{{ route('stores.cashiers.index', $store->id) }}" class="btn btn-sm btn-secondary">Cancel</a>
     </form>
+    </div>
+   </div>
 </div>
 @endsection

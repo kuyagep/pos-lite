@@ -28,24 +28,6 @@
         </a>
     </li>
 
-    <!-- Nav Item - POS -->
-    <li class="nav-item {{ request()->routeIs('pos.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('pos.index') }}">
-            <i class="fas fa-cash-register"></i>
-            <span>POS</span>
-        </a>
-    </li>
-
-    <!-- Nav Item - Sales -->
-    <li class="nav-item {{ request()->routeIs('sales.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('sales.index') }}">
-            <i class="fas fa-receipt"></i>
-            <span>Sales</span>
-        </a>
-    </li>
-
-
-
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

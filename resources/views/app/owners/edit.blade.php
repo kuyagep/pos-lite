@@ -1,10 +1,10 @@
 @extends('layouts.super_admin')
 
 @section('content')
-    <div class="container-fluid">
+    <div >
         <h1 class="h3 mb-4 text-gray-800">Edit Owner</h1>
 
-        <div class="card shadow mb-4">
+        <div class="card mb-4">
             <div class="card-body">
                 <form action="{{ route('app.owners.update', $owner->id) }}" method="POST">
                     @csrf
@@ -35,16 +35,16 @@
                     </div>
 
 
-                    <button type="submit" class="btn btn-primary">Update Owner</button>
-                    <a href="{{ route('app.owners.index') }}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-sm btn-primary">Update Owner</button>
+                    <a href="{{ route('app.owners.index') }}" class="btn btn-sm btn-secondary">Cancel</a>
                 </form>
             </div>
         </div>
 
         {{-- Stores list --}}
-        <div class="card shadow mb-4 mt-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Stores Belonging to {{ $owner->name }}</h6>
+        <div class="card mb-4 mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center bg-secondary">
+                <h6 class="m-0 font-weight-bold text-white">Stores Belonging to {{ $owner->name }}</h6>
                 <a href="{{ route('app.stores.create', ['owner_id' => $owner->id]) }}" class="btn btn-sm btn-success">
                     + Add Store
                 </a>
@@ -52,7 +52,7 @@
             <div class="card-body">
                 @if ($owner->stores->count() > 0)
                     <table class="table table-bordered">
-                        <thead>
+                        <thead class="table-dark">
                             <tr>
                                 <th>Store Name</th>
                                 <th>Email</th>
@@ -70,10 +70,10 @@
                                     <td>{{ $store->address ?? '-' }}</td>
                                      <td class="text-center">
                                 <a href="{{ route('app.stores.show', $store->id) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> View
+                                    <i class="fas fa-eye"></i>
                                 </a>
                                 <a href="{{ route('app.stores.edit', $store->id) }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
+                                    <i class="fas fa-edit"></i>
                                 </a>
                             </td>
                                 </tr>

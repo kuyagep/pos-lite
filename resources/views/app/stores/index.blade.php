@@ -10,7 +10,7 @@
 <div class="alert alert-success">{{ session('success') }}</div>
 @endif
 
-<div class="card shadow mb-4">
+<div class="card mb-4">
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
@@ -32,10 +32,11 @@
                     <td>{{ $store->phone }}</td>
                     <td>{{ $store->address }}</td>
                     <td>
-                        <a href="{{ route('app.stores.edit', $store->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{{ route('app.stores.show', $store->id) }}" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></a>
+                        <a href="{{ route('app.stores.edit', $store->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
                         <form action="{{ route('app.stores.destroy', $store->id) }}" method="POST" class="d-inline">
                             @csrf @method('DELETE')
-                            <button type="submit" onclick="return confirm('Delete this store?')" class="btn btn-sm btn-danger">Delete</button>
+                            <button type="submit" onclick="return confirm('Delete this store?')" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
                         </form>
                     </td>
                 </tr>

@@ -1,20 +1,20 @@
 @extends('layouts.super_admin')
 
 @section('content')
-<div class="container-fluid">
+<div>
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Manage Owners</h1>
-        <a href="{{ route('app.owners.create') }}" class="btn btn-sm btn-primary shadow-sm">
+        <a href="{{ route('app.owners.create') }}" class="btn btn-sm btn-primary">
             <i class="fas fa-plus fa-sm text-white-50"></i> Add New Owner
         </a>
     </div>
 
     <!-- Owners Table -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Owners List</h6>
+    <div class="card mb-4">
+        <div class="card-header py-3 bg-secondary">
+            <h6 class="m-0 font-weight-bold text-white">Owners List</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">

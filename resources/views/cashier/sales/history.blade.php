@@ -33,13 +33,14 @@
             @if($sales->count() > 0)
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
-                        <thead class="table-primary">
+                        <thead class="table-dark">
                             <tr>
                                 <th>Date</th>
-                                <th>Transaction ID</th>
+                                <th>Receipt No</th>
                                 <th>Total Amount</th>
                                 <th>Discount</th>
                                 <th>Payment Method</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -50,6 +51,12 @@
                                     <td>₱{{ number_format($sale->total_amount, 2) }}</td>
                                     <td>₱{{ number_format($sale->discount, 2) }}</td>
                                     <td>{{ ucfirst($sale->payment_method) }}</td>
+                                    <td>
+                                    <a href="{{ route('pos.receipt', $sale->id) }}"
+                                       class="btn btn-sm btn-primary">
+                                        <i class="fas fa-receipt"></i> View Receipt
+                                    </a>
+                                </td>
                                 </tr>
                             @endforeach
                         </tbody>

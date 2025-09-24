@@ -20,7 +20,8 @@
         <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar" style="background-color:#00695c;">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('cashier.dashboard') }}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center"
+                href="{{ route('cashier.dashboard') }}">
                 <div class="sidebar-brand-icon">
                     <i class="fas fa-cash-register"></i>
                 </div>
@@ -79,7 +80,7 @@
                         <!-- User Info -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">
                                     {{ Auth::user()->name }}
                                 </span>
@@ -87,9 +88,9 @@
                             </a>
                             <!-- Dropdown -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                 aria-labelledby="userDropdown">
+                                aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="#"
-                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -109,11 +110,14 @@
                 <!-- End Main Content -->
             </div>
 
-            <!-- Footer -->
             <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="text-center my-auto">
-                        <span>© {{ date('Y') }} POSLite Cashier Panel</span>
+                <div class="container-fluid">
+                    <div class="row align-items-end text-right">
+                        <div class="col-md-12 ">
+                            <span>© {{ now()->year }}</span>
+                            <span>Powered by <strong class="text-primary"><i class="fas fa-store"></i> POSLite</strong>
+                                v1</span>
+                        </div>
                     </div>
                 </div>
             </footer>
@@ -127,4 +131,5 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('scripts')
 </body>
+
 </html>

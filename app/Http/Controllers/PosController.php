@@ -12,143 +12,171 @@ use Illuminate\Support\Facades\Session;
 
 class PosController extends Controller
 {
-    // POS Index (scanner + cart)
+    /**
+     * Show POS main page with cart + products
+     */
     public function index()
     {
+        $cashier = Auth::user();
+        $store   = $cashier->store;
+        $products = $store->products()->where('stock', '>', 0)->get();
+
         $cart = Session::get('cart', []);
-        return view('pos.index', compact('cart'));
+
+        return view('pos.index', compact('cart', 'products'));
     }
 
-    // Add product by QR (AJAX)
+    /**
+     * Add product by QR (AJAX request)
+     */
     public function addToCart(Request $request)
     {
         $request->validate([
             'qr_code' => 'required|string',
         ]);
 
-        $product = Product::where('qr_code', $request->qr_code)->firstOrFail();
+        $product = Product::where('qr_code', $request->qr_code)
+            ->where('stock', '>', 0)
+            ->firstOrFail();
 
         $cart = Session::get('cart', []);
 
         if (isset($cart[$product->id])) {
+            // Prevent overselling
+            if ($cart[$product->id]['quantity'] >= $product->stock) {
+                return response()->json([
+                    'error' => 'Not enough stock available for ' . $product->name
+                ], 422);
+            }
+
             $cart[$product->id]['quantity']++;
-            $cart[$product->id]['subtotal'] = $cart[$product->id]['quantity'] * $cart[$product->id]['price'];
         } else {
             $cart[$product->id] = [
-                'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->price,
+                'id'       => $product->id,
+                'name'     => $product->name,
+                'price'    => $product->price,
                 'quantity' => 1,
-                'subtotal' => $product->price,
             ];
         }
 
+        $cart[$product->id]['subtotal'] = $cart[$product->id]['quantity'] * $cart[$product->id]['price'];
+
         Session::put('cart', $cart);
 
-        return response()->json(['success' => true, 'cart' => $cart]);
-    }
-
-    // Checkout
-    public function checkout()
-    {
-        $cart = session()->get('cart', []);
-
-        // Calculate totals
-        $subtotal = collect($cart)->sum(fn($item) => $item['subtotal']);
-        $totalItems = collect($cart)->sum(fn($item) => $item['quantity']);
-
-        return view('pos.checkout', [
-            'cart'       => $cart,
-            'subtotal'   => $subtotal,
-            'totalItems' => $totalItems,
+        return response()->json([
+            'success' => true,
+            'cart'    => $cart
         ]);
     }
 
-
-    // Confirm Payment
-    public function confirm(Request $request)
+    /**
+     * Checkout Page
+     */
+    public function checkout()
     {
         $cart = Session::get('cart', []);
+
+        $subtotal   = collect($cart)->sum(fn($item) => $item['subtotal']);
+        $totalItems = collect($cart)->sum(fn($item) => $item['quantity']);
+
+        return view('pos.checkout', compact('cart', 'subtotal', 'totalItems'));
+    }
+
+    /**
+     * Confirm and save transaction
+     */
+    public function confirm(Request $request)
+    {
+        $request->validate([
+            'payment_method' => 'required|string|in:cash,card,e-wallet',
+            'discount'       => 'nullable|numeric|min:0',
+            'customer_name'  => 'nullable|string|max:255',
+        ]);
+
+        $cart = Session::get('cart', []);
+
         if (empty($cart)) {
             return response()->json(['error' => 'Cart is empty'], 400);
         }
 
-        $discount = $request->input('discount', 0);
-        $customerName = $request->input('customer_name', null);
-        $paymentMethod = $request->input('payment_method', 'cash'); // ✅ dynamic payment method
-
         DB::beginTransaction();
         try {
-            // Calculate totals
-            $total = collect($cart)->sum(fn($item) => $item['subtotal']);
+            $cashier = $request->user();
+            $store   = $cashier->store;
+
+            $discount   = $request->input('discount', 0);
+            $total      = collect($cart)->sum(fn($item) => $item['subtotal']);
             $grandTotal = max($total - $discount, 0);
 
-            // Create Sale record
+            // Save Sale
             $sale = Sale::create([
-                'store_id' => $request->user()->store_id, // assign the logged-in user's store
-                'user_id'        => auth()->id(),
+                'store_id'       => $store->id,
+                'user_id'     => $cashier->id,
                 'total_amount'   => $grandTotal,
                 'discount'       => $discount,
-                'payment_method' => $paymentMethod,
-                'notes'          => $customerName, // ✅ Save customer name/notes
+                'payment_method' => $request->payment_method,
+                'notes'          => $request->customer_name,
             ]);
 
-            // Save Sale Items + Update Stock
+            // Save Items
             foreach ($cart as $productId => $item) {
+                $product = Product::findOrFail($productId);
+
+                // Double-check stock
+                if ($product->stock < $item['quantity']) {
+                    throw new \Exception("Insufficient stock for {$product->name}");
+                }
+
                 SaleItem::create([
                     'sale_id'    => $sale->id,
-                    'product_id' => $productId,
+                    'product_id' => $product->id,
                     'quantity'   => $item['quantity'],
                     'price'      => $item['price'],
                     'subtotal'   => $item['subtotal'],
                 ]);
 
-                // Decrement stock
-                $product = Product::findOrFail($productId);
+                // Reduce stock
                 $product->decrement('stock', $item['quantity']);
             }
 
             DB::commit();
-
-            // Clear cart after success
             Session::forget('cart');
 
             return response()->json([
-                'message' => 'Sale completed!',
-                'sale_id' => $sale->id
+                'success' => true,
+                'message' => 'Sale completed successfully!',
+                'sale_id' => $sale->id,
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json([
+                'error' => 'Transaction failed: ' . $e->getMessage()
+            ], 500);
         }
     }
 
-    // Receipt Page
+    /**
+     * Receipt Page
+     */
     public function receipt($id)
     {
-        // ✅ Fetch from DB (instead of session) for persistence
-        $transaction = Sale::with('items.product') // assuming you have TransactionItem model
-            ->find($id);
+        $store = auth()->user()->store;
+        $sale = Sale::with(['items.product', 'cashier'])->find($id);
 
-        if (!$transaction) {
-            return redirect()->route('pos.index')
-                ->with('error', 'Receipt not found!');
+        if (!$sale) {
+            return redirect()->route('pos.index')->with('error', 'Receipt not found.');
         }
 
-        return view('pos.receipt', compact('transaction'));
+        return view('pos.receipt', compact('sale','store'));
     }
 
-    // Clear cart
-    public function clearCart()
-    {
-        Session::forget('cart');
-        return redirect()->route('pos.index')->with('success', 'Cart cleared.');
-    }
-
+    /**
+     * Remove one product from cart
+     */
     public function removeFromCart(Request $request)
     {
         $request->validate([
-            'product_id' => 'required',
+            'product_id' => 'required|integer|exists:products,id',
         ]);
 
         $cart = Session::get('cart', []);
@@ -160,7 +188,16 @@ class PosController extends Controller
 
         return response()->json([
             'success' => true,
-            'cart' => $cart
+            'cart'    => $cart
         ]);
+    }
+
+    /**
+     * Clear entire cart
+     */
+    public function clearCart()
+    {
+        Session::forget('cart');
+        return redirect()->route('pos.index')->with('success', 'Cart cleared.');
     }
 }

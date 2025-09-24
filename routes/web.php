@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CashierController;
 use App\Http\Controllers\CashierDashboardController;
 use App\Http\Controllers\DailyReportController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Owner\OwnerStoreController;
 use App\Http\Controllers\Owner\StoreCashierController;
 use App\Http\Controllers\Owner\StoreProductController;
+use App\Http\Controllers\Owner\StoreSalesController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
@@ -41,7 +43,7 @@ Route::middleware(['auth', 'subscription'])->group(function () {
 //     ->middleware(['auth', 'subscription:reports']);
 
 
-//Super Admin routes
+//!Super Admin routes
 Route::middleware(['auth', 'role:' . User::ROLE_SUPER_ADMIN])->prefix('app')->name('app.')->group(function () {
     // Route::resource('plans', PlanController::class);
     Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
@@ -49,17 +51,13 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPER_ADMIN])->prefix('app')->na
     Route::resource('stores', StoreController::class);
 });
 
-// Store Admin routes
+//? Store Admin routes
 Route::middleware(['auth', 'role:' . User::ROLE_STORE_ADMIN])->group(function () {
     Route::get('/admin', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/account', [AccountController::class, 'edit'])->name('account.edit');
+    Route::post('/admin/account', [AccountController::class, 'update'])->name('account.update');
+
     Route::get('/stores', [OwnerStoreController::class, 'index'])->name('stores.index');
-    // Route::get('/stores/{store}/products', [OwnerProductController::class, 'index'])->name('stores.products.index');
-    Route::resource('cashiers', CashierController::class);
-    Route::resource('products', ProductController::class);
-    Route::get('/sales/summary', [SaleController::class, 'summary'])->name('sales.summary');
-    Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
-    Route::get('reports', [DailyReportController::class, 'index'])->name('reports.index');
-    Route::post('reports/generate', [DailyReportController::class, 'generate'])->name('reports.generate');
 
     // Multi-store Product Management
     Route::get('stores/{store}/products', [StoreProductController::class, 'index'])->name('stores.products.index');
@@ -68,6 +66,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_STORE_ADMIN])->group(function ()
     Route::get('stores/{store}/products/{product}/edit', [StoreProductController::class, 'edit'])->name('stores.products.edit');
     Route::put('stores/{store}/products/{product}', [StoreProductController::class, 'update'])->name('stores.products.update');
     Route::delete('stores/{store}/products/{product}', [StoreProductController::class, 'destroy'])->name('stores.products.destroy');
+    Route::get('stores/{store}/products/{product}', [StoreProductController::class, 'show'])->name('stores.products.show');
 
     // Cashiers per store
     Route::get('/stores/{store}/cashiers', [StoreCashierController::class, 'index'])->name('stores.cashiers.index');
@@ -77,10 +76,13 @@ Route::middleware(['auth', 'role:' . User::ROLE_STORE_ADMIN])->group(function ()
     Route::put('/stores/{store}/cashiers/{cashier}', [StoreCashierController::class, 'update'])->name('stores.cashiers.update');
     Route::delete('/stores/{store}/cashiers/{cashier}', [StoreCashierController::class, 'destroy'])->name('stores.cashiers.destroy');
 
+    // Store Sales History
+    Route::get('stores/{store}/sales', [\App\Http\Controllers\Owner\StoreSalesController::class, 'index'])->name('stores.sales.index');
+    Route::get('/stores/{store}/sales/{sale}', [StoreSalesController::class, 'show'])->name('stores.sales.show');
 
 });
 
-// Store Staff routes
+//* Store Staff routes
 Route::middleware(['auth', 'role:' . User::ROLE_STORE_STAFF])->group(function () {
     Route::get('/dashboard', [CashierDashboardController::class, 'index'])->name('cashier.dashboard');
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');

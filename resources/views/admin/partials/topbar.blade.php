@@ -2,7 +2,7 @@
     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
         <i class="fa fa-bars"></i>
     </button>
-    <h5 class="m-0 fw-bold text-white">Store Name</h5>
+    {{-- <h5 class="m-0 fw-bold text-white">Store Name</h5> --}}
 
     <ul class="navbar-nav ml-auto">
         <!-- Nav Item - User Information -->
@@ -18,7 +18,7 @@
             </a>
             <!-- Dropdown - User Info -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="{{ route('account.edit') }}">
                     <i class="fas fa-user-cog fa-sm fa-fw mr-2 text-gray-400"></i>
                     Account Settings
                 </a>

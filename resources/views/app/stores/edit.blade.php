@@ -1,10 +1,10 @@
 @extends('layouts.super_admin')
 
 @section('content')
-<div class="container-fluid">
+<div>
     <h1 class="h3 mb-4 text-gray-800">Edit Store</h1>
 
-    <div class="card shadow mb-4">
+    <div class="card mb-4">
         <div class="card-header">
             <h6 class="m-0 font-weight-bold text-primary">Update Store Information</h6>
         </div>
@@ -49,6 +49,8 @@
                     <label for="owner">Owner</label>
                     <input type="text" class="form-control"
                            value="{{ $store->owner->name ?? 'N/A' }}" disabled>
+                    <input type="hidden" name="owner_id" class="form-control"
+                           value="{{ $store->owner->id ?? 'N/A' }}">
                 </div>
 
                 <!-- Buttons -->

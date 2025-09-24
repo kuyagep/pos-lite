@@ -51,6 +51,7 @@ class StoreController extends Controller
 
     public function update(Request $request, Store $store)
     {
+        // dd($request->all());
         $request->validate([
             'name'   => 'required|string|max:255',
             'email'  => 'required|email|unique:stores,email,' . $store->id,
@@ -58,7 +59,7 @@ class StoreController extends Controller
             'address' => 'nullable|string|max:255',
             'owner_id' => 'required|exists:users,id',
         ]);
-
+            // dd($request->all());
         $store->update($request->all());
 
         return redirect()->route('app.stores.index')->with('success', 'Store updated successfully.');

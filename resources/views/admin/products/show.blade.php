@@ -5,11 +5,15 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <div class="card shadow mb-4">
+            <div class="card mb-4">
                 <div class="card-body">
-                     <h4 class="mb-4">{{ $product->name }}</h4>
+                    <h4 class="mb-4">{{ $product->name }}</h4>
                     <table class="table table-bordered">
                         <tbody>
+                            <tr>
+                                <th scope="row" style="width: 200px;">Product Code</th>
+                                <td>{{ $product->qr_code ?? 'N/A' }}</td>
+                            </tr>
                             <tr>
                                 <th scope="row" style="width: 200px;">Category</th>
                                 <td>{{ $product->category ?? 'N/A' }}</td>
@@ -29,10 +33,11 @@
                         </tbody>
                     </table>
 
-                    <a href="{{ route('products.index') }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('stores.products.index', $store->id) }}" class="btn btn-secondary btn-sm">
                         <i class="fas fa-arrow-left"></i> Back
                     </a>
-                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('stores.products.edit', [$store->id, $product->id]) }}"
+                        class="btn btn-primary btn-sm">
                         <i class="fas fa-edit"></i> Edit
                     </a>
                 </div>
@@ -40,7 +45,7 @@
         </div>
 
         <div class="col-lg-6 text-center">
-            <div class="card shadow mb-4">
+            <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="mb-3">QR Code</h5>
                     @if ($product->qr_code)

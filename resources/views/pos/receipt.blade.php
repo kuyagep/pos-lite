@@ -11,13 +11,13 @@
                 <small>{{ now()->format('F d, Y h:i A') }}</small>
             </div>
 
-            <!-- Transaction Info -->
+            <!-- sale Info -->
             <div class="mb-3">
-                <p><strong>Receipt No:</strong> #{{ $transaction->id }}</p>
-                <p><strong>Cashier:</strong> {{ $transaction->cashier->name ?? 'N/A' }}</p>
-                <p><strong>Payment Method:</strong> {{ ucfirst($transaction->payment_method) }}</p>
-                @if($transaction->notes)
-                    <p><strong>Customer:</strong> {{ $transaction->notes }}</p>
+                <p><strong>Receipt No:</strong> #{{ $sale->id }}</p>
+                <p><strong>Cashier:</strong> {{ $sale->cashier->name ?? 'N/A' }}</p>
+                <p><strong>Payment Method:</strong> {{ ucfirst($sale->payment_method) }}</p>
+                @if($sale->notes)
+                    <p><strong>Customer:</strong> {{ $sale->notes }}</p>
                 @endif
             </div>
 
@@ -32,7 +32,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($transaction->items as $item)
+                    @foreach($sale->items as $item)
                         <tr>
                             <td>{{ $item->product->name ?? 'Unknown' }}</td>
                             <td class="text-end">₱{{ number_format($item->price, 2) }}</td>
@@ -44,17 +44,17 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-end"><strong>Subtotal</strong></td>
-                        <td class="text-end">₱{{ number_format($transaction->items->sum('subtotal'), 2) }}</td>
+                        <td class="text-end">₱{{ number_format($sale->items->sum('subtotal'), 2) }}</td>
                     </tr>
-                    @if($transaction->discount > 0)
+                    @if($sale->discount > 0)
                         <tr>
                             <td colspan="3" class="text-end"><strong>Discount</strong></td>
-                            <td class="text-end">- ₱{{ number_format($transaction->discount, 2) }}</td>
+                            <td class="text-end">- ₱{{ number_format($sale->discount, 2) }}</td>
                         </tr>
                     @endif
                     <tr>
                         <td colspan="3" class="text-end"><strong>Grand Total</strong></td>
-                        <td class="text-end fw-bold">₱{{ number_format($transaction->total_amount, 2) }}</td>
+                        <td class="text-end fw-bold">₱{{ number_format($sale->total_amount, 2) }}</td>
                     </tr>
                 </tfoot>
             </table>

@@ -1,7 +1,7 @@
 <?php
 
 return [
-
+    'license_key' => env('APP_LICENSE_KEY', null),
     /*
     |--------------------------------------------------------------------------
     | Application Name

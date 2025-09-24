@@ -5,6 +5,7 @@ use App\Http\Controllers\CashierController;
 use App\Http\Controllers\CashierDashboardController;
 use App\Http\Controllers\DailyReportController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LicenseController;
 use App\Http\Controllers\Owner\OwnerStoreController;
 use App\Http\Controllers\Owner\StoreCashierController;
 use App\Http\Controllers\Owner\StoreProductController;
@@ -23,6 +24,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('landing');
 })->name('landing');
+
+Route::get('/license/activate', [LicenseController::class, 'showActivateForm'])->name('license.activate');
+Route::post('/license/activate', [LicenseController::class, 'activate'])->name('license.activate.submit');
 
 // Route::middleware(['auth', 'verified'])->group(function () {
 //     Route::get('/dashboard', function () {
@@ -83,7 +87,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_STORE_ADMIN])->group(function ()
 });
 
 //* Store Staff routes
-Route::middleware(['auth', 'role:' . User::ROLE_STORE_STAFF])->group(function () {
+Route::middleware(['auth', 'role:' . User::ROLE_STORE_STAFF, 'check.license'])->group(function () {
     Route::get('/dashboard', [CashierDashboardController::class, 'index'])->name('cashier.dashboard');
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::post('/pos/add', [POSController::class, 'addToCart'])->name('pos.add');

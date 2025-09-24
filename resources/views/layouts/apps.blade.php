@@ -24,20 +24,20 @@
   <body>
 
 
-    <div class="container-fluid py-5" style="background-color: #f1f3f4;">
+    <div class="container-fluid py-5" >
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
 
                 <!-- Image on Top -->
-                <div class="text-center mb-4">
+                {{-- <div class="text-center mb-4">
                     <img src="{{asset('images/banner.png')}}"
                          alt="Teacher's Day Banner"
                          class="img-fluid rounded"
-                         style="max-height: 200px; object-fit: cover;">
+                         style="max-height: 200px; object-fit: cover;"> --}}
                 </div>
 
                 <!-- Registration Form -->
-                <div class="p-4 rounded shadow-sm bg-white">
+                <div class="p-4 rounded bg-white">
                     @yield('content')
                 </div>
 

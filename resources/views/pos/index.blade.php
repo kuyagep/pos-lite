@@ -55,7 +55,7 @@
                         <!-- Search Bar -->
                         <div class="mb-3">
                             <input type="text" id="product-search" class="form-control"
-                                placeholder="🔍 Search items here…">
+                                placeholder="🔍 Search items here…" autofocus>
                         </div>
                     </div>
                 </div>

@@ -26,7 +26,7 @@ Route::get('/', function () {
 })->name('landing');
 
 Route::get('/license/activate', [LicenseController::class, 'showActivateForm'])->name('license.activate');
-Route::post('/license/activate', [LicenseController::class, 'activate'])->name('license.activate.submit');
+Route::post('/license/activate/app', [LicenseController::class, 'activate'])->name('license.activate.submit');
 
 // Route::middleware(['auth', 'verified'])->group(function () {
 //     Route::get('/dashboard', function () {
@@ -56,7 +56,7 @@ Route::middleware(['auth', 'role:' . User::ROLE_SUPER_ADMIN])->prefix('app')->na
 });
 
 //? Store Admin routes
-Route::middleware(['auth', 'role:' . User::ROLE_STORE_ADMIN])->group(function () {
+Route::middleware(['auth', 'role:' . User::ROLE_STORE_ADMIN, 'check.license'])->group(function () {
     Route::get('/admin', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/account', [AccountController::class, 'edit'])->name('account.edit');
     Route::post('/admin/account', [AccountController::class, 'update'])->name('account.update');

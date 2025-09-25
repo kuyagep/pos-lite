@@ -16,7 +16,15 @@ class CheckLicense
      */
     public function handle(Request $request, Closure $next)
     {
-        $licenseKey = config('app.license_key');
+        // allow activation routes without license
+        if ($request->routeIs('license.*') || $request->is('license/*')) {
+            return $next($request);
+        }
+
+        $licenseKey = trim(config('app.license_key') ?? '');
+        if (empty($licenseKey)) {
+            return redirect()->route('license.activate')->with('error', 'Please activate license.');
+        }
 
         $license = License::where('license_key', $licenseKey)->first();
 

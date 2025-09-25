@@ -22,19 +22,19 @@ class UserSeeder extends Seeder
         ]);
 
         // Store Admin
-        User::create([
-            'name' => 'Store Admin',
-            'email' => 'store.admin@poslite.com',
-            'password' => Hash::make('password'),
-            'role' => User::ROLE_STORE_ADMIN,
-        ]);
+        // User::create([
+        //     'name' => 'Store Admin',
+        //     'email' => 'store.admin@poslite.com',
+        //     'password' => Hash::make('password'),
+        //     'role' => User::ROLE_STORE_ADMIN,
+        // ]);
 
         // Staff
-        User::create([
-            'name' => 'Staff User',
-            'email' => 'store.staff@poslite.com',
-            'password' => Hash::make('password'),
-            'role' => User::ROLE_STORE_STAFF,
-        ]);
+        // User::create([
+        //     'name' => 'Staff User',
+        //     'email' => 'store.staff@poslite.com',
+        //     'password' => Hash::make('password'),
+        //     'role' => User::ROLE_STORE_STAFF,
+        // ]);
     }
 }
